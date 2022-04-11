@@ -13,7 +13,8 @@ uses
   IdContext,
   IdHTTPWebBrokerBridge,
   Customer.Controller in '..\src\controller\Customer.Controller.pas',
-  WebModule.Main in '..\src\services\WebModule.Main.pas' {wmMain: TWebModule};
+  WebModule.Main in '..\src\services\WebModule.Main.pas' {wmMain: TWebModule},
+  Customer.Model in '..\src\model\Customer.Model.pas';
 
 {$R *.res}
 

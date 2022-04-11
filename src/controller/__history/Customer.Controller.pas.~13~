@@ -1,0 +1,138 @@
+unit Customer.Controller;
+
+interface
+
+uses
+  System.SysUtils,
+  System.StrUtils,
+  System.Generics.Collections,
+  FireDAC.Comp.Client,
+  firedac.phys.SQLite,
+  MVCFramework,
+  MVCFramework.SQLGenerators.Sqlite,
+  MVCFramework.ActiveRecord,
+  MVCFramework.Commons,
+  MVCFramework.Serializer.Commons,
+  Customer.Model,
+  MVCFramework.Logger;
+
+type
+
+  [MVCPath('/api')]
+  TCustomerController = class(TMVCController)
+  private
+    FDConn : TFDConnection;
+  public
+    [MVCPath]
+    [MVCHTTPMethod([httpGET])]
+    procedure Index;
+
+    [MVCPath('/reversedstrings/($Value)')]
+    [MVCHTTPMethod([httpGET])]
+    procedure GetReversedString(const Value: String);
+  protected
+    procedure OnBeforeAction(Context: TWebContext; const AActionName: string; var Handled: Boolean); override;
+    procedure OnAfterAction(Context: TWebContext; const AActionName: string); override;
+
+  public
+    //Sample CRUD Actions for a "Customer" entity
+    [MVCPath('/customers')]
+    [MVCHTTPMethod([httpGET])]
+    procedure GetCustomers;
+
+    [MVCPath('/customers/($id)')]
+    [MVCHTTPMethod([httpGET])]
+    procedure GetCustomer(id: Integer);
+
+    [MVCPath('/customers')]
+    [MVCHTTPMethod([httpPOST])]
+    procedure CreateCustomer;
+
+    [MVCPath('/customers/($id)')]
+    [MVCHTTPMethod([httpPUT])]
+    procedure UpdateCustomer(id: Integer);
+
+    [MVCPath('/customers/($id)')]
+    [MVCHTTPMethod([httpDELETE])]
+    procedure DeleteCustomer(id: Integer);
+
+    Constructor Create; override;
+
+  end;
+
+implementation
+
+procedure TCustomerController.Index;
+begin
+  //use Context property to access to the HTTP request and response 
+  Render('Olá! Vamos codar?');
+end;
+
+procedure TCustomerController.GetReversedString(const Value: String);
+begin
+  Render(System.StrUtils.ReverseString(Value.Trim));
+end;
+
+procedure TCustomerController.OnAfterAction(Context: TWebContext; const AActionName: string);
+begin
+  { Executed after each action }
+  inherited;
+end;
+
+procedure TCustomerController.OnBeforeAction(Context: TWebContext; const AActionName: string; var Handled: Boolean);
+begin
+  { Executed before each action
+    if handled is true (or an exception is raised) the actual
+    action will not be called }
+  inherited;
+end;
+
+//Sample CRUD Actions for a "Customer" entity
+procedure TCustomerController.GetCustomers;
+var
+  lCustomers : TObjectList<TCustomer>;
+begin
+  lCustomers := TMVCActiveRecord.SelectRQL<TCustomer>('', 0);
+  Render<TCustomer>(lCustomers);
+end;
+
+procedure TCustomerController.GetCustomer(id: Integer);
+var
+  lCustomer : TCustomer;
+begin
+  lCustomer := TMVCActiveRecord.GetByPK<TCustomer>(id);
+
+  Render(lCustomer);
+end;
+
+constructor TCustomerController.Create;
+begin
+  inherited;
+  FDConn := TFDConnection.Create(nil);
+  FDConn.Params.Clear;
+  FDConn.Params.Database := 'C:\Componentes\delphimvcframework\samples\data\ACTIVERECORDDB.FDB';
+  FDConn.DriverName := 'SQLite';
+  FDConn.Connected := True;
+
+  ActiveRecordConnectionsRegistry.AddDefaultConnection(FDConn);
+end;
+
+procedure TCustomerController.CreateCustomer;
+
+begin
+  //todo: create a new customer
+end;
+
+procedure TCustomerController.UpdateCustomer(id: Integer);
+begin
+  //todo: update customer by id
+end;
+
+procedure TCustomerController.DeleteCustomer(id: Integer);
+begin
+  //todo: delete customer by id
+end;
+
+
+
+end.

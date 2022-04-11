@@ -1,0 +1,11 @@
+{
+	"name": "DMVCFramework",
+	"description": "Projeto para estudos DMVCFramework",
+	"version": "1.0.0",
+	"homepage": "",
+	"mainsrc": "./src",
+	"projects": [],
+	"dependencies": {
+		"https://github.com/danieleteti/delphimvcframework": "^v3.2.0-boron-RC2"
+	}
+}

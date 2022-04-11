@@ -1,0 +1,14 @@
+{
+	"hash": "d41d8cd98f00b204e9800998ecf8427e",
+	"updated": "2022-04-08T18:23:26.1381641-03:00",
+	"installedModules": {
+		"https://github.com/danieleteti/delphimvcframework": {
+			"name": "delphimvcframework",
+			"version": "v3.2.0-boron-RC2",
+			"hash": "18510889ad6928d6296dded1ac2ad726",
+			"artifacts": {},
+			"failed": false,
+			"changed": false
+		}
+	}
+}

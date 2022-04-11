@@ -26,7 +26,7 @@ implementation
 {$R *.dfm}
 
 uses 
-  Unit1, 
+  Customer.Controller,
   System.IOUtils, 
   MVCFramework.Commons, 
   MVCFramework.Middleware.StaticFiles, 
@@ -60,7 +60,7 @@ begin
       // Max request size in bytes
       Config[TMVCConfigKey.MaxRequestSize] := IntToStr(TMVCConstants.DEFAULT_MAX_REQUEST_SIZE);
     end);
-  FMVC.AddController(TCustomer);
+  FMVC.AddController(TCustomerController);
 
   // Enable the following middleware declaration if you want to
   // serve static files from this dmvcframework service.

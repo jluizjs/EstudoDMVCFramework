@@ -3,12 +3,25 @@ unit Customer.Controller;
 interface
 
 uses
-  MVCFramework, MVCFramework.Commons, MVCFramework.Serializer.Commons;
+  System.SysUtils,
+  System.StrUtils,
+  System.Generics.Collections,
+  FireDAC.Comp.Client,
+  firedac.phys.SQLite,
+  MVCFramework,
+  MVCFramework.SQLGenerators.Sqlite,
+  MVCFramework.ActiveRecord,
+  MVCFramework.Commons,
+  MVCFramework.Serializer.Commons,
+  Customer.Model,
+  MVCFramework.Logger;
 
 type
 
   [MVCPath('/api')]
-  TCustomer = class(TMVCController) 
+  TCustomerController = class(TMVCController)
+  private
+    FDConn : TFDConnection;
   public
     [MVCPath]
     [MVCHTTPMethod([httpGET])]
@@ -43,31 +56,30 @@ type
     [MVCHTTPMethod([httpDELETE])]
     procedure DeleteCustomer(id: Integer);
 
+    Constructor Create; override;
+
   end;
 
 implementation
 
-uses
-  System.SysUtils, MVCFramework.Logger, System.StrUtils;
-
-procedure TCustomer.Index;
+procedure TCustomerController.Index;
 begin
   //use Context property to access to the HTTP request and response 
-  Render('Hello DelphiMVCFramework World');
+  Render('Olá! Vamos codar?');
 end;
 
-procedure TCustomer.GetReversedString(const Value: String);
+procedure TCustomerController.GetReversedString(const Value: String);
 begin
   Render(System.StrUtils.ReverseString(Value.Trim));
 end;
 
-procedure TCustomer.OnAfterAction(Context: TWebContext; const AActionName: string); 
+procedure TCustomerController.OnAfterAction(Context: TWebContext; const AActionName: string);
 begin
   { Executed after each action }
   inherited;
 end;
 
-procedure TCustomer.OnBeforeAction(Context: TWebContext; const AActionName: string; var Handled: Boolean);
+procedure TCustomerController.OnBeforeAction(Context: TWebContext; const AActionName: string; var Handled: Boolean);
 begin
   { Executed before each action
     if handled is true (or an exception is raised) the actual
@@ -76,28 +88,72 @@ begin
 end;
 
 //Sample CRUD Actions for a "Customer" entity
-procedure TCustomer.GetCustomers;
+procedure TCustomerController.GetCustomers;
+var
+  lCustomers : TObjectList<TCustomer>;
 begin
-  //todo: render a list of customers
+  try
+    lCustomers := TMVCActiveRecord.Select<TCustomer>('SELECT * FROM CUSTOMERS', []);
+    Render<TCustomer>(lCustomers);
+  finally
+    //lCustomers.Free;
+  end;
 end;
 
-procedure TCustomer.GetCustomer(id: Integer);
+procedure TCustomerController.GetCustomer(id: Integer);
+var
+  lCustomer : TCustomer;
 begin
-  //todo: render the customer by id
+  try
+    lCustomer := TMVCActiveRecord.GetByPK<TCustomer>(id);
+
+    Render(lCustomer);
+  finally
+    //lCustomer.DisposeOf;
+  end;
 end;
 
-procedure TCustomer.CreateCustomer;
+constructor TCustomerController.Create;
+begin
+  inherited;
+  FDConn := TFDConnection.Create(nil);
+  FDConn.Params.Clear;
+  FDConn.Params.Database := 'C:\Users\jluiz\OneDrive\Programacao\Delphi\DMVCFramework\src\db\activerecorddb.db';
+  FDConn.DriverName := 'SQLite';
+  FDConn.Connected := True;
 
+  ActiveRecordConnectionsRegistry.AddDefaultConnection(FDConn);
+end;
+
+procedure TCustomerController.CreateCustomer;
+var
+  lCustomer : TCustomer;
 begin
   //todo: create a new customer
+  try
+    lCustomer := Context.Request.BodyAs<TCustomer>;
+
+    lCustomer.Insert;
+  finally
+    //lCustomer.DisposeOf;
+  end;
 end;
 
-procedure TCustomer.UpdateCustomer(id: Integer);
+procedure TCustomerController.UpdateCustomer(id: Integer);
+var
+  lCustomer : Tcustomer;
 begin
   //todo: update customer by id
+  try
+    lCustomer := Context.Request.BodyAs<TCustomer>;
+    lCustomer.id := id;
+    lCustomer.Update;
+  finally
+
+  end;
 end;
 
-procedure TCustomer.DeleteCustomer(id: Integer);
+procedure TCustomerController.DeleteCustomer(id: Integer);
 begin
   //todo: delete customer by id
 end;
