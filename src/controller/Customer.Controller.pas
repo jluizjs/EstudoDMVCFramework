@@ -44,6 +44,10 @@ type
     [MVCHTTPMethod([httpGET])]
     procedure GetCustomer(id: Integer);
 
+    [MVCPath('/customers-array')]
+    [MVCHTTPMethod([httpPOST])]
+    procedure GetCustomerArray();
+
     [MVCPath('/customers')]
     [MVCHTTPMethod([httpPOST])]
     procedure CreateCustomer;
@@ -61,6 +65,9 @@ type
   end;
 
 implementation
+
+uses
+  System.JSON;
 
 procedure TCustomerController.Index;
 begin
@@ -113,6 +120,16 @@ begin
   end;
 end;
 
+procedure TCustomerController.GetCustomerArray();
+var
+  lCustomer : TCustomer;
+  i : Integer;
+begin
+  lCustomer := Context.Request.BodyAs<TCustomer>;
+
+  Render(lCustomer);
+end;
+
 constructor TCustomerController.Create;
 begin
   inherited;
@@ -141,7 +158,7 @@ end;
 
 procedure TCustomerController.UpdateCustomer(id: Integer);
 var
-  lCustomer : Tcustomer;
+  lCustomer : TCustomer;
 begin
   //todo: update customer by id
   try
@@ -154,8 +171,14 @@ begin
 end;
 
 procedure TCustomerController.DeleteCustomer(id: Integer);
+var
+  lCustomer : TCustomer;
 begin
   //todo: delete customer by id
+  lCustomer := TMVCActiveRecord.GetByPK<TCustomer>(id);
+  lCustomer.Delete;
+
+  Render(TJSONObject.Create(TJSONPair.Create('result','Registro Deletado')));
 end;
 
 

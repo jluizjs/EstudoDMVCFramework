@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{0AD0188E-0293-4353-9817-688E38EA6987}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Project\prjAPI.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Client\Project\prjAPI_View.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="prjAPI">
+        <MSBuild Projects="Project\prjAPI.dproj"/>
+    </Target>
+    <Target Name="prjAPI:Clean">
+        <MSBuild Projects="Project\prjAPI.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="prjAPI:Make">
+        <MSBuild Projects="Project\prjAPI.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="prjAPI_View">
+        <MSBuild Projects="Client\Project\prjAPI_View.dproj"/>
+    </Target>
+    <Target Name="prjAPI_View:Clean">
+        <MSBuild Projects="Client\Project\prjAPI_View.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="prjAPI_View:Make">
+        <MSBuild Projects="Client\Project\prjAPI_View.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="prjAPI;prjAPI_View"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="prjAPI:Clean;prjAPI_View:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="prjAPI:Make;prjAPI_View:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

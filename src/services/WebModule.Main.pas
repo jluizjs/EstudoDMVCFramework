@@ -30,9 +30,13 @@ uses
   System.IOUtils, 
   MVCFramework.Commons, 
   MVCFramework.Middleware.StaticFiles, 
-  MVCFramework.Middleware.Compression;
+  MVCFramework.Middleware.Compression,
+  MVCFramework.Middleware.Swagger,
+  MVCFramework.Swagger.Commons;
 
 procedure TwmMain.WebModuleCreate(Sender: TObject);
+var
+  lSwagInfo : TMVCSwaggerInfo;
 begin
   FMVC := TMVCEngine.Create(Self,
     procedure(Config: TMVCConfig)
@@ -46,7 +50,7 @@ begin
       //unhandled actions are permitted?
       Config[TMVCConfigKey.AllowUnhandledAction] := 'false';
       //enables or not system controllers loading (available only from localhost requests)
-      Config[TMVCConfigKey.LoadSystemControllers] := 'true';
+      Config[TMVCConfigKey.LoadSystemControllers] := 'false';
       //default view file extension
       Config[TMVCConfigKey.DefaultViewFileExtension] := 'html';
       //view path
@@ -70,8 +74,27 @@ begin
   //    TPath.Combine(ExtractFilePath(GetModuleName(HInstance)), 'www')) 
   //  );	
 
-  // To enable compression (deflate, gzip) just add this middleware as the last one 
+  // To enable compression (deflate, gzip) just add this middleware as the last one
   FMVC.AddMiddleware(TMVCCompressionMiddleware.Create);
+
+  lSwagInfo.Title := 'API Customer';
+  lSwagInfo.Version := 'v1';
+  lSwagInfo.TermsOfService := 'http://www.seutoermo.com.br';
+  lSwagInfo.Description := 'API de manutenção de Customer';
+  lSwagInfo.ContactName := 'Jose Souza';
+  lSwagInfo.ContactEmail := 'jluizjs@gmail.com';
+  lSwagInfo.ContactUrl := 'http://www.seusite.com.br';
+  lSwagInfo.LicenseName := 'Seu termo de licença';
+  lSwagInfo.LicenseUrl := 'http://www.seutermodelicenca.com.br';
+
+  FMVC.AddMiddleware(TMVCSwaggerMiddleware.Create(FMVC,
+                                                  LSWagInfo,
+                                                  '/api/swagger.json',
+                                                  'API Customer'));
+
+  FMVC.AddMiddleware(TMVCStaticFilesMiddleware.Create('/api/doc',
+                                                      '.\www',
+                                                      'index.html'));
 end;
 
 procedure TwmMain.WebModuleDestroy(Sender: TObject);

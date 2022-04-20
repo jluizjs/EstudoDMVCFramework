@@ -2,9 +2,12 @@ unit Customer.Model;
 
 interface
 
-uses MVCFramework.ActiveRecord;
+uses
+  MVCFramework.ActiveRecord,
+  MVCFramework.Serializer.Commons;
 
 type
+  [MVCNameCase(TMVCNameCase.ncAsIs)]
   [MVCTable('customers')]
   TCustomer = class(TMVCActiveRecord)
   private
@@ -20,13 +23,17 @@ type
     Fdescription: String;
     [MVCTableField('city', [])]
     Fcity: String;
+    FidList: TArray<Integer>;
+
     procedure Setcity(const Value: String);
     procedure Setcode(const Value: String);
     procedure Setdescription(const Value: String);
     procedure Setid(const Value: Integer);
     procedure Setnote(const Value: String);
     procedure Setrating(const Value: Integer);
+    procedure SetidList(const Value: TArray<Integer>);
     public
+      property idList : TArray<Integer> read FidList write SetidList;
       property id: Integer read Fid write Setid;
       property code: String read Fcode write Setcode;
       property description: String read Fdescription write Setdescription;
@@ -57,6 +64,11 @@ end;
 procedure TCustomer.Setid(const Value: Integer);
 begin
   Fid := Value;
+end;
+
+procedure TCustomer.SetidList(const Value: TArray<Integer>);
+begin
+  FidList := Value;
 end;
 
 procedure TCustomer.Setnote(const Value: String);

@@ -1,0 +1,62 @@
+unit frmMain;
+
+interface
+
+uses
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  System.Actions,
+  Vcl.ActnList,
+  Vcl.PlatformDefaultStyleActnCtrls,
+  Vcl.ActnMan,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  MVCFramework.RESTClient;
+
+type
+  TfrmViewCustomer = class(TForm)
+    pnlMain: TPanel;
+    pnlTop: TPanel;
+    pnlCenter: TPanel;
+    mmoCustomer: TMemo;
+    btnGetAll: TButton;
+    ActionManager1: TActionManager;
+    Action1: TAction;
+    procedure Action1Execute(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmViewCustomer: TfrmViewCustomer;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmViewCustomer.Action1Execute(Sender: TObject);
+var
+  lRESTClient : TRESTClient;
+  lRESTResponse : IRESTResponse;
+begin
+  lRESTClient := TRESTClient.Create('localhost', 8081);
+  try
+    lRESTClient.doGET('/api/customers', []);
+
+    mmoCustomer.Text := lRESTResponse.BodyAsString;
+  finally
+    lRESTClient.DisposeOf;
+  end;
+
+end;
+
+end.

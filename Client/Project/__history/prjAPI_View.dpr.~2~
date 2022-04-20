@@ -1,0 +1,14 @@
+program prjAPI_View;
+
+uses
+  Vcl.Forms,
+  frmMain in '..\View\frmMain.pas' {frmViewCustomer};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TfrmViewCustomer, frmViewCustomer);
+  Application.Run;
+end.
